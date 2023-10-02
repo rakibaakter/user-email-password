@@ -5,6 +5,7 @@ import { useState } from "react";
 const Register = () => {
   const [registerError, setRegisterError] = useState("");
   const [success, setSuccess] = useState("");
+  // const [showPassword, setShowPassword] = useState(false);
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
@@ -18,6 +19,9 @@ const Register = () => {
 
     if (password.length < 6) {
       setRegisterError("password must have atleast 6 character");
+      return;
+    } else if (!/[A-Z]/.test(password)) {
+      setRegisterError("password should have atleast one capital character");
       return;
     }
 
@@ -43,11 +47,6 @@ const Register = () => {
           Enter your details to register.
         </p>
 
-        {registerError && (
-          <p className="text-red-700 text-2xl mt-10">{registerError}</p>
-        )}
-        {success && <p className="text-green-700 text-2xl mt-10">{success}</p>}
-
         <form
           onSubmit={handleRegisterSubmit}
           className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto"
@@ -58,6 +57,7 @@ const Register = () => {
                 type="email"
                 placeholder="Email Address"
                 name="email"
+                required
                 className=" h-full w-full rounded-md border px-3 py-3 "
               />
             </div>
@@ -66,6 +66,7 @@ const Register = () => {
                 type="password"
                 placeholder=" password"
                 name="password"
+                required
                 className=" h-full w-full rounded-md border px-3 py-3 "
               />
             </div>
@@ -78,6 +79,10 @@ const Register = () => {
             </div>
           </div>
         </form>
+        {registerError && (
+          <p className="text-red-700 text-2xl mt-10">{registerError}</p>
+        )}
+        {success && <p className="text-green-700 text-2xl mt-10">{success}</p>}
       </div>
     </div>
   );
