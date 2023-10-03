@@ -1,9 +1,34 @@
-import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import auth from "../../Firebase/firebase.config";
 
 const Login = () => {
+  const [registerError, setRegisterError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const emailRef = useRef(null);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    console.log(email, password);
+
+    // reset error and success message
+    setRegisterError("");
+    setSuccess("");
+
+    //log in user
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        setSuccess("Logged in successfully");
+      })
+      .catch((err) => setRegisterError(err.message));
+  };
 
   return (
     <div className="max-w-6xl mx-auto py-10 ">
@@ -12,11 +37,15 @@ const Login = () => {
           Log In Here...
         </h4>
 
-        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto">
+        <form
+          onSubmit={handleLogin}
+          className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto"
+        >
           <div className="mb-4 flex flex-col gap-6">
             <div className="relative h-11 w-full min-w-[200px]">
               <input
                 type="email"
+                ref={emailRef}
                 placeholder="Email Address"
                 name="email"
                 required
@@ -55,6 +84,20 @@ const Login = () => {
             </div>
           </div>
         </form>
+        <div>
+          {registerError && (
+            <p className="text-red-700 text-2xl mt-10">{registerError}</p>
+          )}
+          {success && (
+            <p className="text-green-700 text-2xl mt-10">{success}</p>
+          )}
+        </div>
+        <p>
+          Dont have any account?
+          <Link to="/" className="text-blue-700">
+            Please create account
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../Firebase/firebase.config";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [registerError, setRegisterError] = useState("");
@@ -27,7 +28,7 @@ const Register = () => {
       setRegisterError("password should have atleast one capital character");
       return;
     } else if (!termsAccepted) {
-      setRegisterError("Please Accept our terms and conditions!");
+      setRegisterError("Please Accept our terms and conditions");
       return;
     } else {
       // create user
@@ -109,6 +110,12 @@ const Register = () => {
             <p className="text-green-700 text-2xl mt-10">{success}</p>
           )}
         </div>
+        <p>
+          Already have an account?
+          <Link to="/login" className="text-blue-700">
+            Please Log In
+          </Link>
+        </p>
       </div>
     </div>
   );
