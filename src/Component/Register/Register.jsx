@@ -1,3 +1,4 @@
+// import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../Firebase/firebase.config";
 import { useState } from "react";
@@ -12,7 +13,8 @@ const Register = () => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(email, password);
+    const termsAccepted = e.target.terms.checked;
+    console.log(email, password, termsAccepted);
 
     // reset error and success message
     setRegisterError("");
@@ -24,18 +26,21 @@ const Register = () => {
     } else if (!/[A-Z]/.test(password)) {
       setRegisterError("password should have atleast one capital character");
       return;
+    } else if (!termsAccepted) {
+      setRegisterError("Please Accept our terms and conditions!");
+      return;
+    } else {
+      // create user
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((result) => {
+          const user = result.user;
+          console.log(user);
+          setSuccess("Registration succeed");
+        })
+        .catch((error) => {
+          setRegisterError(error.message);
+        });
     }
-
-    // create user
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((result) => {
-        const user = result.user;
-        console.log(user);
-        setSuccess("Registration succeed");
-      })
-      .catch((error) => {
-        setRegisterError(error.message);
-      });
   };
 
   return (
@@ -77,6 +82,15 @@ const Register = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
+            <div className="relative h-11 w-full min-w-[200px] text-left">
+              <input type="checkbox" name="terms" id="terms" />
+              <label htmlFor="terms" className="ml-3">
+                Accept our
+                <a href="#" className="text-blue-700 ml-1 hover:underline">
+                  Terms and Condition
+                </a>
+              </label>
+            </div>
 
             <div className="relative h-11 w-full min-w-[200px]">
               <input
@@ -87,10 +101,14 @@ const Register = () => {
             </div>
           </div>
         </form>
-        {registerError && (
-          <p className="text-red-700 text-2xl mt-10">{registerError}</p>
-        )}
-        {success && <p className="text-green-700 text-2xl mt-10">{success}</p>}
+        <div>
+          {registerError && (
+            <p className="text-red-700 text-2xl mt-10">{registerError}</p>
+          )}
+          {success && (
+            <p className="text-green-700 text-2xl mt-10">{success}</p>
+          )}
+        </div>
       </div>
     </div>
   );
