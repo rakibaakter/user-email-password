@@ -1,4 +1,7 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -28,6 +31,26 @@ const Login = () => {
         setSuccess("Logged in successfully");
       })
       .catch((err) => setRegisterError(err.message));
+  };
+
+  //   handle forgot password
+  const handleForgotPassword = () => {
+    const email = emailRef.current.value;
+    console.log(email);
+
+    if (!email) {
+      alert("give your email");
+      return;
+    }
+
+    // password reset
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("Please check your email");
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   return (
@@ -68,7 +91,7 @@ const Login = () => {
               </span>
             </div>
             <div className="text-left">
-              <Link>
+              <Link onClick={handleForgotPassword}>
                 <a href="" className="text-blue-700 hover:underline">
                   Forgot Password?
                 </a>
